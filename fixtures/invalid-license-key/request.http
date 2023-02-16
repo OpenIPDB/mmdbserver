@@ -1,0 +1,3 @@
+GET /geoip/databases/GeoLite2-Country/update HTTP/1.1
+Authorization: Basic MTAwMDA6
+

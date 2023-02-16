@@ -1,0 +1,5 @@
+HTTP/1.1 307 Temporary Redirect
+Connection: close
+Content-Type: text/html; charset=utf-8
+Location: https://example.com
+

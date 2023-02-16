@@ -1,0 +1,5 @@
+HTTP/1.1 304 Not Modified
+Connection: close
+Content-Type: text/plain; charset=utf-8
+X-Content-Type-Options: nosniff
+
