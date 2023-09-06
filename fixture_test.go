@@ -8,7 +8,7 @@ import (
 )
 
 func mustFixtureRequest(name string) (request *http.Request) {
-	fp, err := os.Open(filepath.Join("fixtures", name, "request.http"))
+	fp, err := os.Open(filepath.Join("fixtures", name+"@request.http"))
 	if err != nil {
 		panic(err)
 	}
@@ -20,7 +20,7 @@ func mustFixtureRequest(name string) (request *http.Request) {
 }
 
 func mustFixtureResponse(name string, request *http.Request) (response *http.Response) {
-	fp, err := os.Open(filepath.Join("fixtures", name, "response.http"))
+	fp, err := os.Open(filepath.Join("fixtures", name+"@response.http"))
 	if err != nil {
 		panic(err)
 	}

@@ -2,6 +2,7 @@ package mmdbserver
 
 import (
 	"encoding/hex"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing/fstest"
@@ -42,6 +43,6 @@ func TestResponse(t *testing.T) {
 	header := response.Header()
 	assert.Equal(t, header.Get("Content-Type"), "application/x-gzip")
 	assert.Equal(t, header.Get("Content-Encoding"), "gzip")
-	assert.Equal(t, header.Get("Last-Modified"), mmdbResponse.ModTime.Format(time.RFC1123))
+	assert.Equal(t, header.Get("Last-Modified"), mmdbResponse.ModTime.UTC().Format(http.TimeFormat))
 	assert.Equal(t, header.Get("X-Database-Md5"), md5Hash)
 }

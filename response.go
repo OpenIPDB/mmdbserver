@@ -57,7 +57,7 @@ func (r *Response) WriteTo(w io.Writer) (n int64, err error) {
 		header := rw.Header()
 		header.Set("Content-Type", "application/x-gzip")
 		header.Set("Content-Encoding", "gzip")
-		header.Set("Last-Modified", r.ModTime.Format(time.RFC1123))
+		header.Set("Last-Modified", r.ModTime.UTC().Format(http.TimeFormat))
 		header.Set("X-Database-Md5", hex.EncodeToString(r.MD5Hash()))
 	}
 	return r.gzipped.WriteTo(w)
