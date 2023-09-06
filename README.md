@@ -7,7 +7,7 @@ ability to help you implement delivery using [geoipupdate] for 3rd-party ip data
 
 ## References
 
-- [docs/protocol.md](docs/protocol.md)
+- [docs/openapi.yaml](docs/openapi.yaml)
 
 ## LICENSE
 

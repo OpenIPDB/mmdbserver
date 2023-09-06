@@ -1,0 +1,168 @@
+openapi: 3.0.0
+info:
+  title: MaxMind GeoIPUpdate Protocol
+  description: MaxMind GeoIPUpdate Protocol Design
+  version: 1.0.0
+  termsOfService: https://www.maxmind.com/en/end-user-license-agreement
+  contact:
+    name: MaxMind
+    url: https://www.maxmind.com/en/company/contact-us
+  license:
+    name: MIT
+    url: https://github.com/maxmind/geoipupdate/blob/main/LICENSE-MIT
+paths:
+  /geoip/databases/{edition-id}/update:
+    servers:
+      - url: https://updates.maxmind.com
+        description: Official Update Server
+    get:
+      description: Get latest version
+      operationId: latest
+      security:
+        - authentication: [ ]
+      parameters:
+        - name: edition-id
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/EditionID"
+        - name: User-Agent
+          in: header
+          schema:
+            type: string
+            example: geoipupdate/6.0.0
+            description: User Agent
+        - name: db_md5
+          in: query
+          required: true
+          schema:
+            type: string
+            example: '00000000000000000000000000000000'
+            description: Local Database MD5 Summed
+      responses:
+        200:
+          description: OK (gzipped)
+          headers:
+            Content-Encoding:
+              schema:
+                type: string
+                example: gzip
+            X-Database-Md5:
+              schema:
+                type: string
+                example: '00000000000000000000000000000000'
+                description: Uncompressed MD5 Hash, use hexadecimal encoded
+            Last-Modified:
+              schema:
+                type: string
+                example: Wed, 01 Sep 2023 00:00:00 GMT
+                description: RFC1123 format
+        301:
+          description: Use new location download update
+        304:
+          description: Unmodified
+        401:
+          description: Unauthorized
+        default:
+          description: Download first 256 bytes on error message
+  /app/geoip_download:
+    description: Permanent download link
+    servers:
+      - url: https://download.maxmind.com
+        description: Official Download Server
+    get:
+      operationId: download
+      security:
+        - licenseKey: []
+      parameters:
+        - $ref: "#/components/parameters/EditionID"
+        - $ref: "#/components/parameters/Date"
+        - $ref: "#/components/parameters/Suffix"
+      responses:
+        200:
+          description: OK
+        400:
+          description: Invalid date or suffix
+        401:
+          description: Invalid license key
+        404:
+          description: Database edition not found
+  /app/geoip_download_by_token:
+    description: Temporary download link
+    servers:
+      - url: https://download.maxmind.com
+        description: Official Download Server
+    get:
+      operationId: downloadByToken
+      security:
+        - token: [ ]
+      parameters:
+        - $ref: "#/components/parameters/EditionID"
+        - $ref: "#/components/parameters/Date"
+        - $ref: "#/components/parameters/Suffix"
+      responses:
+        200:
+          description: OK
+        400:
+          description: Invalid date or suffix
+        401:
+          description: Invalid license key
+        404:
+          description: Database edition not found
+components:
+  parameters:
+    EditionID:
+      name: edition_id
+      in: query
+      required: true
+      schema:
+        $ref: "#/components/schemas/EditionID"
+    Date:
+      name: date
+      in: query
+      required: true
+      schema:
+        $ref: "#/components/schemas/Date"
+    Suffix:
+      name: suffix
+      in: query
+      required: true
+      schema:
+        $ref: "#/components/schemas/Suffix"
+  schemas:
+    EditionID:
+      type: string
+      description: Edition ID
+      default: GeoLite2-Country
+      enum:
+        - GeoLite2-Country
+        - GeoLite2-Country-ASN
+        - GeoLite2-ASN
+        - GeoLite2-ASN-CSV
+        - GeoLite2-City
+        - GeoLite2-City-CSV
+    Date:
+      type: string
+      format: date
+      example: 20230906
+      description: Date (yyyyMMdd)
+    Suffix:
+      type: string
+      default: zip
+      enum: [ tar.gz, tar.gz.sha256, zip, zip.sha256 ]
+      description: File Suffix Name
+  securitySchemes:
+    token:
+      type: apiKey
+      name: token
+      in: query
+      description: Access Token
+    licenseKey:
+      type: apiKey
+      name: license_key
+      in: query
+      description: License Key
+    authentication:
+      type: http
+      scheme: basic
+      description: Username as Account ID, Password as License Key
