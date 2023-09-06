@@ -63,6 +63,8 @@ paths:
           description: Unmodified
         401:
           description: Unauthorized
+        404:
+          description: Database edition not found
         default:
           description: Download first 256 bytes on error message
   /app/geoip_download:
