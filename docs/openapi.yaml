@@ -37,7 +37,7 @@ paths:
           required: true
           schema:
             type: string
-            example: '00000000000000000000000000000000'
+            example: "00000000000000000000000000000000"
             description: Local Database MD5 Summed
       responses:
         200:
@@ -50,7 +50,7 @@ paths:
             X-Database-Md5:
               schema:
                 type: string
-                example: '00000000000000000000000000000000'
+                example: "00000000000000000000000000000000"
                 description: Uncompressed MD5 Hash, use hexadecimal encoded
             Last-Modified:
               schema:
@@ -75,7 +75,7 @@ paths:
     get:
       operationId: download
       security:
-        - licenseKey: []
+        - licenseKey: [ ]
       parameters:
         - $ref: "#/components/parameters/EditionID"
         - $ref: "#/components/parameters/Date"
