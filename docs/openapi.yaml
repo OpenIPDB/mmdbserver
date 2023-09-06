@@ -54,19 +54,28 @@ paths:
                 description: Uncompressed MD5 Hash, use hexadecimal encoded
             Last-Modified:
               schema:
+                $ref: "#/components/schemas/RFC1123"
+          content:
+            application/octet-stream:
+              schema:
                 type: string
-                example: Wed, 01 Sep 2023 00:00:00 GMT
-                description: RFC1123 format
-        301:
-          description: Use new location download update
+                format: binary
         304:
           description: Unmodified
+          content:
+            text/plain:
+              schema:
+                type: string
         401:
-          description: Unauthorized
+          $ref: "#/components/responses/InvalidLicenseKey"
         404:
-          description: Database edition not found
+          $ref: "#/components/responses/NotFound"
         default:
           description: Download first 256 bytes on error message
+          content:
+            text/plain:
+              schema:
+                type: string
   /app/geoip_download:
     description: Permanent download link
     servers:
@@ -82,13 +91,13 @@ paths:
         - $ref: "#/components/parameters/Suffix"
       responses:
         200:
-          description: OK
+          $ref: "#/components/responses/DownloadFile"
         400:
-          description: Invalid date or suffix
+          $ref: "#/components/responses/InvalidParams"
         401:
-          description: Invalid license key
+          $ref: "#/components/responses/InvalidLicenseKey"
         404:
-          description: Database edition not found
+          $ref: "#/components/responses/NotFound"
   /app/geoip_download_by_token:
     description: Temporary download link
     servers:
@@ -104,13 +113,13 @@ paths:
         - $ref: "#/components/parameters/Suffix"
       responses:
         200:
-          description: OK
+          $ref: "#/components/responses/DownloadFile"
         400:
-          description: Invalid date or suffix
+          $ref: "#/components/responses/InvalidParams"
         401:
-          description: Invalid license key
+          $ref: "#/components/responses/InvalidLicenseKey"
         404:
-          description: Database edition not found
+          $ref: "#/components/responses/NotFound"
 components:
   parameters:
     EditionID:
@@ -131,6 +140,55 @@ components:
       required: true
       schema:
         $ref: "#/components/schemas/Suffix"
+  responses:
+    DownloadFile:
+      description: OK
+      headers:
+        Content-Disposition:
+          schema:
+            type: string
+          example: attachment; filename={edition-id}_{yyyyMMdd}.{suffix}
+        Last-Modified:
+          schema:
+            $ref: "#/components/schemas/RFC1123"
+        Etag:
+          schema:
+            type: string
+            description: Quoted MD5 Hash Hex String
+      content:
+        application/zip:
+          schema:
+            type: string
+            format: binary
+            description: Only suffix "zip"
+        application/gzip:
+          schema:
+            type: string
+            format: binary
+            description: Only suffix "tar.gz"
+        text/plain:
+          schema:
+            type: string
+            format: binary
+            description: Only suffix "zip.sha256" or "tar.gz.sha256"
+    InvalidParams:
+      description: Invalid edition-id, date or suffix
+      content:
+        text/plain:
+          schema:
+            type: string
+    InvalidLicenseKey:
+      description: Invalid license key
+      content:
+        text/plain:
+          schema:
+            type: string
+    NotFound:
+      description: Database edition not found
+      content:
+        text/plain:
+          schema:
+            type: string
   schemas:
     EditionID:
       type: string
@@ -151,8 +209,16 @@ components:
     Suffix:
       type: string
       default: zip
-      enum: [ tar.gz, tar.gz.sha256, zip, zip.sha256 ]
+      enum:
+        - zip
+        - zip.sha256
+        - tar.gz
+        - tar.gz.sha256
       description: File Suffix Name
+    RFC1123:
+      type: string
+      example: Wed, 01 Sep 2023 00:00:00 GMT
+      description: RFC1123 format
   securitySchemes:
     token:
       type: apiKey
