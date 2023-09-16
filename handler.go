@@ -1,7 +1,6 @@
 package mmdbserver
 
 import (
-	"errors"
 	"net/http"
 	"regexp"
 )
@@ -30,12 +29,7 @@ func (h *MMDBUpdateHandler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 	response, err := h.invoke(r)
 	if err != nil {
-		var exception *Error
-		if errors.As(err, &exception) {
-			http.Error(rw, err.Error(), exception.StatusCode)
-		} else {
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
-		}
+		WriteError(rw, err)
 		return
 	}
 	_, _ = response.WriteTo(rw)

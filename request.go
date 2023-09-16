@@ -33,9 +33,9 @@ func NewRequest(r *http.Request) (request *Request, err error) {
 	case request.EditionID == "":
 		err = ErrInvalidEditionID
 	case !isNumeric(request.AccountID):
-		err = ErrInvalidAccount
+		err = ErrInvalidAccountID
 	case request.LicenseKey == "":
-		err = ErrInvalidAccount
+		err = ErrInvalidAccountID
 	case len(request.MD5Hash) != 16:
 		err = ErrInvalidMD5Hash
 	}

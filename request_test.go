@@ -15,8 +15,8 @@ func TestGeneralRequest(t *testing.T) {
 func TestInvalidRequest(t *testing.T) {
 	fixtures := map[string]error{
 		"invalid-edition-id":  ErrInvalidEditionID,
-		"invalid-account-id":  ErrInvalidAccount,
-		"invalid-license-key": ErrInvalidAccount,
+		"invalid-account-id":  ErrInvalidAccountID,
+		"invalid-license-key": ErrInvalidAccountID,
 		"invalid-hash":        ErrInvalidMD5Hash,
 	}
 	for name, target := range fixtures {

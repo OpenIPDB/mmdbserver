@@ -36,7 +36,7 @@ func main() {
 		HomePage: homepage,
 		MMDBHandler: mmdbserver.MMDBHandlerFunc(func(resp *mmdbserver.Response, r *mmdbserver.Request) (err error) {
 			if passwd != nil && !passwd.Match(r.AccountID, r.EditionID) {
-				err = mmdbserver.ErrUnauthorized
+				err = mmdbserver.ErrInvalidLicenseKey
 				return
 			}
 			database, _ := fs.Open(r.EditionID + ".mmdb")
